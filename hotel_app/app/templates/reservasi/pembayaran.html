@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Detail Pembayaran</h3>
+                    
+                    <!-- Informasi Reservasi -->
+                    <div class="mb-4">
+                        <h5>Detail Reservasi</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tr>
+                                    <td width="200">Nomor Kamar</td>
+                                    <td>: {{ reservasi.kamar.nomor }} ({{ reservasi.kamar.tipe }})</td>
+                                </tr>
+                                <tr>
+                                    <td>Nama Tamu</td>
+                                    <td>: {{ reservasi.nama_tamu }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Check In</td>
+                                    <td>: {{ reservasi.check_in.strftime('%d %b %Y') }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Check Out</td>
+                                    <td>: {{ reservasi.check_out.strftime('%d %b %Y') }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Durasi</td>
+                                    <td>: {{ (reservasi.check_out - reservasi.check_in).days }} malam</td>
+                                </tr>
+                                <tr>
+                                    <td>Harga per Malam</td>
+                                    <td>: Rp {{ "{:,.0f}".format(reservasi.kamar.harga) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Pembayaran</td>
+                                    <td>: <strong>Rp {{ "{:,.0f}".format(total_harga) }}</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Form Pembayaran -->
+                    <form action="{{ url_for('reservasi.proses_pembayaran', reservasi_id=reservasi.id) }}" method="POST">
+                        <div class="mb-4">
+                            <h5>Metode Pembayaran</h5>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="metode_pembayaran" value="transfer_bank" id="transfer_bank" checked>
+                                <label class="form-check-label" for="transfer_bank">
+                                    Transfer Bank
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="metode_pembayaran" value="kartu_kredit" id="kartu_kredit">
+                                <label class="form-check-label" for="kartu_kredit">
+                                    Kartu Kredit
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="metode_pembayaran" value="tunai" id="tunai">
+                                <label class="form-check-label" for="tunai">
+                                    Tunai
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Informasi Rekening (untuk transfer bank) -->
+                        <div class="mb-4" id="info_bank">
+                            <h5>Informasi Rekening</h5>
+                            <div class="alert alert-info">
+                                <p class="mb-1"><strong>Bank BCA</strong></p>
+                                <p class="mb-1">No. Rekening: 1234567890</p>
+                                <p class="mb-0">Atas Nama: Hotel System</p>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Konfirmasi Pembayaran</button>
+                        <a href="{{ url_for('reservasi.index') }}" class="btn btn-secondary">Kembali</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
