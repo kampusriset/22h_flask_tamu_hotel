@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}New Reservation - Pablo Hotel{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Make a Reservation</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <!-- Pilih Kamar -->
+                        <div class="mb-3">
+                            <label for="room_id" class="form-label">Select Room</label>
+                            <select class="form-select" id="room_id" name="room_id" required>
+                                <option value="">Choose a room...</option>
+                                {% for room in available_rooms %}
+                                <option value="{{ room.id }}" data-price="{{ room.price }}">
+                                    {{ room.room_number }} - {{ room.room_type }} 
+                                    (Rp {{ "{:,.2f}".format(room.price) }}/night)
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Tanggal Check-in -->
+                        <div class="mb-3">
+                            <label for="check_in" class="form-label">Check-in Date</label>
+                            <input type="date" class="form-control" id="check_in" name="check_in" 
+                                   min="{{ today }}" required>
+                        </div>
+
+                        <!-- Tanggal Check-out -->
+                        <div class="mb-3">
+                            <label for="check_out" class="form-label">Check-out Date</label>
+                            <input type="date" class="form-control" id="check_out" name="check_out" 
+                                   min="{{ today }}" required>
+                        </div>
+
+                        <!-- Total Harga -->
+                        <div class="mb-3">
+                            <label class="form-label">Total Price</label>
+                            <div class="form-control" id="total_price">Rp 0.00</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Make Reservation</button>
+                            <a href="{{ url_for('guest.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roomSelect = document.getElementById('room_id');
+    const checkInInput = document.getElementById('check_in');
+    const checkOutInput = document.getElementById('check_out');
+    const totalPriceDiv = document.getElementById('total_price');
+
+    function calculateTotal() {
+        const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+        if (!selectedOption.value || !checkInInput.value || !checkOutInput.value) return;
+
+        const pricePerNight = parseFloat(selectedOption.dataset.price);
+        const checkIn = new Date(checkInInput.value);
+        const checkOut = new Date(checkOutInput.value);
+        const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+
+        if (nights > 0) {
+            const total = pricePerNight * nights;
+            totalPriceDiv.textContent = `Rp ${total.toLocaleString('id-ID', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
+        } else {
+            totalPriceDiv.textContent = 'Please select valid dates';
+        }
+    }
+
+    roomSelect.addEventListener('change', calculateTotal);
+    checkInInput.addEventListener('change', function() {
+        checkOutInput.min = this.value;
+        calculateTotal();
+    });
+    checkOutInput.addEventListener('change', calculateTotal);
+});
+</script>
+{% endblock %} 

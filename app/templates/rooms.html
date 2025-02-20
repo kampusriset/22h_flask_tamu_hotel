@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Rooms - Pablo Hotel{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero-section text-center py-5 mb-5" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ url_for('static', filename='images/rooms-hero.jpg') }}') center/cover;">
+        <div class="text-white py-5">
+            <h1 class="display-4">Our Rooms</h1>
+            <p class="lead">Experience luxury and comfort in our well-appointed rooms</p>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form class="row g-3" method="GET">
+                <div class="col-md-3">
+                    <label class="form-label">Room Type</label>
+                    <select class="form-select" name="type">
+                        <option value="">All Types</option>
+                        <option value="Standard" {% if current_filters.type == 'Standard' %}selected{% endif %}>Standard</option>
+                        <option value="Deluxe" {% if current_filters.type == 'Deluxe' %}selected{% endif %}>Deluxe</option>
+                        <option value="Suite" {% if current_filters.type == 'Suite' %}selected{% endif %}>Suite</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Capacity</label>
+                    <select class="form-select" name="capacity">
+                        <option value="">Any</option>
+                        <option value="2" {% if current_filters.capacity == '2' %}selected{% endif %}>2 Persons</option>
+                        <option value="3" {% if current_filters.capacity == '3' %}selected{% endif %}>3 Persons</option>
+                        <option value="4" {% if current_filters.capacity == '4' %}selected{% endif %}>4 Persons</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Price Range</label>
+                    <select class="form-select" name="price">
+                        <option value="">Any</option>
+                        <option value="500000" {% if current_filters.price == '500000' %}selected{% endif %}>Under 500K</option>
+                        <option value="1000000" {% if current_filters.price == '1000000' %}selected{% endif %}>500K - 1M</option>
+                        <option value="1500000" {% if current_filters.price == '1500000' %}selected{% endif %}>Above 1M</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <div class="d-flex gap-2 w-100">
+                        <button type="submit" class="btn btn-primary flex-grow-1">
+                            <i class="fas fa-search me-2"></i>Filter
+                        </button>
+                        <a href="{{ url_for('main.rooms') }}" class="btn btn-secondary">
+                            <i class="fas fa-undo"></i> Reset
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- No Results Message -->
+    {% if not rooms_by_type %}
+    <div class="alert alert-info text-center">
+        <i class="fas fa-info-circle me-2"></i>
+        No rooms found matching your criteria. 
+        <a href="{{ url_for('main.rooms') }}" class="alert-link">Clear filters</a>
+    </div>
+    {% endif %}
+
+    <!-- Room Types -->
+    {% for room_type, rooms in rooms_by_type.items() %}
+    <section class="mb-5">
+        <h2 class="mb-4">{{ room_type }} Rooms</h2>
+        <div class="row">
+            {% for room in rooms %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 room-card">
+                    <img src="{{ url_for('static', filename='images/' + room_type.lower() + '.jpg') }}" 
+                         class="card-img-top" alt="{{ room_type }} Room"
+                         style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">Room {{ room.room_number }}</h5>
+                            <span class="badge {% if room.status == 'available' %}bg-success{% else %}bg-secondary{% endif %}">
+                                {{ room.status|title }}
+                            </span>
+                        </div>
+                        <div class="room-features mb-3">
+                            <p class="card-text">
+                                <i class="fas fa-user-friends"></i> {{ room.capacity }} persons<br>
+                                <i class="fas fa-bed"></i> {{ room.description }}<br>
+                                <i class="fas fa-wifi"></i> Free WiFi<br>
+                                <i class="fas fa-snowflake"></i> Air Conditioning
+                            </p>
+                        </div>
+                        <div class="room-price mb-3">
+                            <h4 class="text-primary">Rp {{ "{:,.2f}".format(room.price) }}<small class="text-muted">/night</small></h4>
+                        </div>
+                        {% if room.status == 'available' %}
+                            {% if current_user.is_authenticated and current_user.role == 'guest' %}
+                            <a href="{{ url_for('guest.new_reservation') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-calendar-plus me-2"></i>Book Now
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('auth.login') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login to Book
+                            </a>
+                            {% endif %}
+                        {% else %}
+                        <button class="btn btn-secondary w-100" disabled>
+                            <i class="fas fa-clock me-2"></i>Not Available
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+
+    <!-- Room Features -->
+    <section class="card mb-5">
+        <div class="card-body">
+            <h2 class="text-center mb-4">All Rooms Include</h2>
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <i class="fas fa-wifi fa-2x mb-3 text-primary"></i>
+                    <h5>Free Wi-Fi</h5>
+                    <p>High-speed internet access</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <i class="fas fa-snowflake fa-2x mb-3 text-primary"></i>
+                    <h5>Air Conditioning</h5>
+                    <p>Individual climate control</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <i class="fas fa-tv fa-2x mb-3 text-primary"></i>
+                    <h5>Smart TV</h5>
+                    <p>With premium channels</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <i class="fas fa-coffee fa-2x mb-3 text-primary"></i>
+                    <h5>Coffee Maker</h5>
+                    <p>With complimentary coffee</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.room-card {
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+}
+
+.room-features {
+    font-size: 0.9rem;
+}
+
+.room-features i {
+    width: 20px;
+    color: #0d6efd;
+    margin-right: 8px;
+}
+
+.hero-section {
+    border-radius: 10px;
+    overflow: hidden;
+}
+</style>
+{% endblock %} 

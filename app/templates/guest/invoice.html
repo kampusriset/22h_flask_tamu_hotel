@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Invoice - Pablo Hotel{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-6">
+                    <h2 class="mb-3">Pablo Hotel</h2>
+                    <div>123 Hotel Street</div>
+                    <div>City, Country 12345</div>
+                    <div>Phone: +62 123 4567 890</div>
+                    <div>Email: info@pablohotel.com</div>
+                </div>
+                <div class="col-6 text-end">
+                    <h1 class="text-uppercase text-primary mb-3">Invoice</h1>
+                    <div>Invoice #: INV-{{ payment.id }}</div>
+                    <div>Date: {{ payment.payment_date.strftime('%d %B %Y') }}</div>
+                    <div>Status: <span class="badge bg-success">PAID</span></div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-6">
+                    <h6 class="text-uppercase">Bill To:</h6>
+                    <div>{{ reservation.username }}</div>
+                    <div>{{ reservation.email }}</div>
+                </div>
+                <div class="col-6 text-end">
+                    <h6 class="text-uppercase">Payment Details:</h6>
+                    <div>Method: {{ payment.payment_method|title }}</div>
+                    <div>Transaction ID: {{ payment.id }}</div>
+                </div>
+            </div>
+
+            <div class="table-responsive-sm">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th class="text-end">Nights</th>
+                            <th class="text-end">Rate/Night</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                {{ reservation.room_type }} Room ({{ reservation.room_number }})<br>
+                                <small class="text-muted">
+                                    Check-in: {{ reservation.check_in.strftime('%d %B %Y') }}<br>
+                                    Check-out: {{ reservation.check_out.strftime('%d %B %Y') }}
+                                </small>
+                            </td>
+                            <td class="text-end">{{ nights }}</td>
+                            <td class="text-end">Rp {{ "{:,.2f}".format(rate_per_night) }}</td>
+                            <td class="text-end">Rp {{ "{:,.2f}".format(reservation.total_price) }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total</strong></td>
+                            <td class="text-end"><strong>Rp {{ "{:,.2f}".format(reservation.total_price) }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="text-uppercase">Notes:</h6>
+                    <p class="text-muted">Thank you for choosing Pablo Hotel. We hope you enjoy your stay!</p>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="row">
+                <div class="col-12 text-center">
+                    <button onclick="window.print()" class="btn btn-primary no-print">
+                        <i class="fas fa-print me-2"></i>Print Invoice
+                    </button>
+                    <a href="{{ url_for('guest.dashboard') }}" class="btn btn-secondary no-print">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .no-print {
+        display: none;
+    }
+    .container {
+        width: 100%;
+        max-width: none;
+    }
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    .card {
+        border: none;
+    }
+    .card-body {
+        padding: 0;
+    }
+}
+</style>
+{% endblock %} 

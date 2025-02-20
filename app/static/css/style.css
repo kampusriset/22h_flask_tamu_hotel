@@ -1,0 +1,168 @@
+body {
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    flex: 1;
+}
+
+footer {
+    background-color: #343a40;
+    color: #ffffff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+/* Search form styling */
+.search-form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-form .form-control,
+.search-form .form-select {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.search-form .btn-primary {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.search-form .btn-primary i {
+    font-size: 14px;
+}
+
+.navbar {
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.jumbotron {
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: .3rem;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.badge {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.form-select-sm {
+    margin-right: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+}
+
+.fas {
+    margin-right: 0.25rem;
+}
+
+/* Custom colors for status badges */
+.badge.bg-success {
+    background-color: #28a745 !important;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.hero-section {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.social-links a {
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.social-links a:hover {
+    color: #0d6efd !important;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar-brand img {
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover img {
+    transform: scale(1.1);
+}
+
+@media print {
+    .navbar,
+    .footer,
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: none;
+        padding: 20px;
+    }
+} 

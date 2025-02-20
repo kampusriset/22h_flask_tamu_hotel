@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to Pablo Hotel{% endblock %}
+
+{% block content %}
+<div class="hero-section" style="background: url('/static/images/hotel-hero.jpg') center/cover; height: 600px;">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-md-6">
+                <div class="text-white">
+                    <h1 class="display-4 fw-bold">Welcome to Pablo Hotel</h1>
+                    <p class="lead">Experience luxury and comfort in the heart of the city</p>
+                    {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">Book Now</a>
+                    {% else %}
+                    <a href="{{ url_for('guest.new_reservation') }}" class="btn btn-primary btn-lg">Book Now</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <!-- Our Rooms Section -->
+    <section class="mb-5">
+        <h2 class="text-center mb-4">Our Rooms</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="/static/images/standard-room.jpg" class="card-img-top" alt="Standard Room">
+                    <div class="card-body">
+                        <h5 class="card-title">Standard Room</h5>
+                        <p class="card-text">Comfortable room with modern amenities</p>
+                        <p class="text-primary fw-bold">From Rp 500.000/night</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="/static/images/deluxe-room.jpg" class="card-img-top" alt="Deluxe Room">
+                    <div class="card-body">
+                        <h5 class="card-title">Deluxe Room</h5>
+                        <p class="card-text">Spacious room with premium facilities</p>
+                        <p class="text-primary fw-bold">From Rp 750.000/night</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="/static/images/suite-room.jpg" class="card-img-top" alt="Suite Room">
+                    <div class="card-body">
+                        <h5 class="card-title">Suite Room</h5>
+                        <p class="card-text">Luxury suite with exclusive services</p>
+                        <p class="text-primary fw-bold">From Rp 1.200.000/night</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.rooms') }}" class="btn btn-primary">View All Rooms</a>
+        </div>
+    </section>
+
+    <!-- Facilities Section -->
+    <section class="mb-5">
+        <h2 class="text-center mb-4">Our Facilities</h2>
+        <div class="row">
+            <div class="col-md-3 text-center mb-4">
+                <i class="fas fa-swimming-pool fa-3x mb-3 text-primary"></i>
+                <h5>Swimming Pool</h5>
+            </div>
+            <div class="col-md-3 text-center mb-4">
+                <i class="fas fa-utensils fa-3x mb-3 text-primary"></i>
+                <h5>Restaurant</h5>
+            </div>
+            <div class="col-md-3 text-center mb-4">
+                <i class="fas fa-dumbbell fa-3x mb-3 text-primary"></i>
+                <h5>Fitness Center</h5>
+            </div>
+            <div class="col-md-3 text-center mb-4">
+                <i class="fas fa-wifi fa-3x mb-3 text-primary"></i>
+                <h5>Free WiFi</h5>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %} 

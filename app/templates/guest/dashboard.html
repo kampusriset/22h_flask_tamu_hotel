@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Guest Dashboard - Pablo Hotel{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Welcome, {{ current_user.username }}</h2>
+    
+    <div class="row">
+        <!-- Statistik -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Active Reservations</h5>
+                    <h2 class="card-text">{{ active_reservations }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reservations</h5>
+                    <h2 class="card-text">{{ total_reservations }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Available Rooms</h5>
+                    <h2 class="card-text">{{ available_rooms }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('guest.new_reservation') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> New Reservation
+                    </a>
+                    <a href="#" class="btn btn-secondary">
+                        <i class="fas fa-history"></i> View History
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Reservations -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Your Upcoming Reservations</h3>
+        </div>
+        <div class="card-body">
+            {% if upcoming_reservations %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Room</th>
+                            <th>Type</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in upcoming_reservations %}
+                        <tr>
+                            <td>{{ reservation.room_number }}</td>
+                            <td>{{ reservation.room_type }}</td>
+                            <td>{{ reservation.check_in }}</td>
+                            <td>{{ reservation.check_out }}</td>
+                            <td>Rp {{ "{:,.2f}".format(reservation.total_price) }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if reservation.status == 'confirmed' else 'warning' }}">
+                                    {{ reservation.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if reservation.status == 'pending' %}
+                                <form action="{{ url_for('guest.cancel_reservation', id=reservation.id) }}" 
+                                      method="POST" style="display: inline;"
+                                      onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </form>
+                                {% endif %}
+                                {% if reservation.payment_status == 'unpaid' and reservation.status == 'pending' %}
+                                <a href="{{ url_for('guest.make_payment', reservation_id=reservation.id) }}" 
+                                   class="btn btn-success btn-sm">
+                                    <i class="fas fa-credit-card"></i> Pay
+                                </a>
+                                {% endif %}
+                                {% if reservation.payment_status == 'paid' %}
+                                <a href="{{ url_for('guest.view_invoice', reservation_id=reservation.id) }}" 
+                                   class="btn btn-info btn-sm">
+                                    <i class="fas fa-file-invoice"></i> Invoice
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center">You have no upcoming reservations.</p>
+            <div class="text-center">
+                <a href="{{ url_for('guest.new_reservation') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Make a Reservation
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Reservation Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cancel Reservation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this reservation?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form id="cancelForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Cancel Reservation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function cancelReservation(id) {
+    const modal = new bootstrap.Modal(document.getElementById('cancelModal'));
+    const form = document.getElementById('cancelForm');
+    form.action = `/guest/reservation/${id}/cancel`;
+    modal.show();
+}
+</script>
+{% endblock %} 

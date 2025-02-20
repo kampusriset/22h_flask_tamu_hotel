@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - Pablo Hotel{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Payment Details</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Reservation Summary</h5>
+                        <table class="table">
+                            <tr>
+                                <th>Room</th>
+                                <td>{{ reservation.room_number }} - {{ reservation.room_type }}</td>
+                            </tr>
+                            <tr>
+                                <th>Check In</th>
+                                <td>{{ reservation.check_in }}</td>
+                            </tr>
+                            <tr>
+                                <th>Check Out</th>
+                                <td>{{ reservation.check_out }}</td>
+                            </tr>
+                            <tr>
+                                <th>Total Amount</th>
+                                <td>Rp {{ "{:,.2f}".format(reservation.total_price) }}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="payment_method" class="form-label">Payment Method</label>
+                            <select class="form-select" id="payment_method" name="payment_method" required>
+                                <option value="">Choose payment method...</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="transfer">Bank Transfer</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Process Payment</button>
+                            <a href="{{ url_for('guest.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

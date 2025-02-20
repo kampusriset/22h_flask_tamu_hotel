@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Facilities - Pablo Hotel{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="jumbotron text-center mb-5">
+        <h1 class="display-4">Hotel Facilities</h1>
+        <p class="lead">Discover our world-class amenities and services</p>
+    </div>
+
+    <!-- Main Facilities -->
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/pool.jpeg') }}" 
+                     class="card-img-top" alt="Swimming Pool">
+                <div class="card-body">
+                    <h4 class="card-title">Swimming Pool</h4>
+                    <p class="card-text">
+                        Enjoy our outdoor swimming pool with stunning views. 
+                        Open daily from 6 AM to 10 PM.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/gym.jpeg') }}" 
+                     class="card-img-top" alt="Fitness Center">
+                <div class="card-body">
+                    <h4 class="card-title">Fitness Center</h4>
+                    <p class="card-text">
+                        State-of-the-art fitness equipment and personal trainers available. 
+                        24/7 access for hotel guests.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Facilities -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Additional Amenities</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-utensils fa-3x mb-3 text-primary"></i>
+                        <h5>Restaurant</h5>
+                        <p>International cuisine served daily<br>
+                           Breakfast: 6 AM - 10 AM<br>
+                           Lunch: 12 PM - 3 PM<br>
+                           Dinner: 6 PM - 10 PM</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-spa fa-3x mb-3 text-primary"></i>
+                        <h5>Spa & Wellness</h5>
+                        <p>Professional massage services<br>
+                           Sauna and steam room<br>
+                           Beauty treatments<br>
+                           Open: 10 AM - 8 PM</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-car fa-3x mb-3 text-primary"></i>
+                        <h5>Parking</h5>
+                        <p>Secure parking area<br>
+                           Valet service available<br>
+                           24/7 security<br>
+                           Free for hotel guests</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Hotel Services</h2>
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <i class="fas fa-concierge-bell fa-2x mb-3 text-primary"></i>
+                    <h5>24/7 Room Service</h5>
+                    <p>Available around the clock</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <i class="fas fa-broom fa-2x mb-3 text-primary"></i>
+                    <h5>Housekeeping</h5>
+                    <p>Daily cleaning service</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <i class="fas fa-tshirt fa-2x mb-3 text-primary"></i>
+                    <h5>Laundry</h5>
+                    <p>Same-day service available</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <i class="fas fa-shuttle-van fa-2x mb-3 text-primary"></i>
+                    <h5>Airport Shuttle</h5>
+                    <p>Free shuttle service</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
