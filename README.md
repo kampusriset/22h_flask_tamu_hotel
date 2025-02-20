@@ -6,6 +6,7 @@ Sistem Manajemen Hotel adalah sebuah aplikasi berbasis web yang dapat digunakan 
 
 ## Flowchart
 Berikut adalah flowchart alur dari aplikasi ini:
+
 ![Flowchart](https://github.com/kampusriset/22h_flask_tamu_hotel/blob/main/Flowchart.png)
 
 ## Teknologi yang Digunakan
