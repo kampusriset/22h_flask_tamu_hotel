@@ -19,6 +19,9 @@ Berikut adalah flowchart alur dari aplikasi ini:
 2. Aktifkan XAMPP (Apache dan MySQL)
 3. Import file sql pada folder database ke http://localhost/phpmyadmin
 4. Buka folder di integrated terminal dan ketik python run.py
+5. Untuk Login dapat menggunakan:
+    - User : admin ; Password: admin123 (Untuk akun admin)
+    - User : tamu ; Password: tamu123 (Untuk akun tamu) atau dapat regrister akun baru untuk role tamu
 
 ## Anggota Kelompok
 1. Willy Darmadi Surya Wardhana (2113010336)

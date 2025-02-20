@@ -4,7 +4,7 @@ def perkenalan(nama, nim, peran):
     print("Peran saya yaitu : ", peran)
 
 if __name__ == "__main__":
-    nama = "Willy Darmadi Surya Wardhana"
-    nim = "2113010336"
-    peran = "Mengerjakan semua fitur yang dibutuhkan pada backend"
+    nama = "Kevin Rizki Fauzi"
+    nim = "2213010458"
+    peran = "Membuat styling halaman dan membuat video dokumentasi"
     perkenalan(nama, nim, peran)
