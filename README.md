@@ -29,4 +29,4 @@ Berikut adalah flowchart alur dari aplikasi ini:
 3. Kevin Rizki Fauzi            (2213010458)
 
 ## Link Video
-[Klik di sini](https://youtu.be/p0hETh8iQug)
+Video demo aplikasi dapat dilihat di -> [Klik di sini](https://youtu.be/p0hETh8iQug)
