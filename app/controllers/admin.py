@@ -29,9 +29,11 @@ def dashboard():
     conn = get_db()
     cur = conn.cursor(dictionary=True)
     
-    # Pagination untuk rooms
+    # Get total rooms untuk statistik
     cur.execute('SELECT COUNT(*) as total FROM rooms')
     total_rooms = cur.fetchone()['total']
+    
+    # Pagination untuk rooms
     total_room_pages = (total_rooms + per_page - 1) // per_page
     
     # Get paginated rooms
@@ -42,12 +44,12 @@ def dashboard():
     ''', (per_page, room_offset))
     rooms = cur.fetchall()
     
-    # Pagination untuk reservations (kode yang sudah ada)
+    # Pagination untuk reservations
     cur.execute('SELECT COUNT(*) as total FROM reservations')
     total_records = cur.fetchone()['total']
     total_pages = (total_records + per_page - 1) // per_page
     
-    # Get paginated reservations (kode yang sudah ada)
+    # Get paginated reservations
     cur.execute('''
         SELECT r.*, u.username, rm.room_number, rm.room_type
         FROM reservations r
@@ -68,7 +70,7 @@ def dashboard():
     cur.execute("SELECT COUNT(*) as count FROM users WHERE role = 'guest'")
     total_guests = cur.fetchone()['count']
     
-    # Get all rooms
+    # Get all rooms untuk form edit
     cur.execute('SELECT * FROM rooms ORDER BY room_number')
     all_rooms = cur.fetchall()
     
@@ -76,11 +78,16 @@ def dashboard():
     cur.execute("SELECT * FROM rooms WHERE status = 'available' ORDER BY room_type, room_number")
     available_rooms_list = cur.fetchall()
     
+    # Get all guests untuk form reservasi
+    cur.execute('SELECT id, username, email FROM users WHERE role = "guest"')
+    guests = cur.fetchall()
+    
     cur.close()
     conn.close()
     
     return render_template('admin/dashboard.html',
                          rooms=rooms,
+                         total_rooms=total_rooms,
                          reservations=reservations,
                          available_rooms=available_rooms,
                          pending_reservations=pending_reservations,
@@ -90,7 +97,8 @@ def dashboard():
                          current_room_page=room_page,
                          total_room_pages=total_room_pages,
                          available_rooms_list=available_rooms_list,
-                         all_rooms=all_rooms)
+                         all_rooms=all_rooms,
+                         guests=guests)
 
 @admin.route('/admin/reservation/<int:id>', methods=['POST'])
 @login_required
