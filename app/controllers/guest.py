@@ -19,18 +19,41 @@ def guest_required(f):
 @login_required
 @guest_required
 def dashboard():
+    page = request.args.get('page', 1, type=int)
+    per_page = 4
+    offset = (page - 1) * per_page
+    
     conn = get_db()
     cur = conn.cursor(dictionary=True)
     
-    # Get user's active reservations count
+    # Get total reservations for pagination
+    cur.execute('''
+        SELECT COUNT(*) as total 
+        FROM reservations 
+        WHERE user_id = %s AND status IN ('pending', 'confirmed')
+    ''', (current_user.id,))
+    total_records = cur.fetchone()['total']
+    total_pages = (total_records + per_page - 1) // per_page
+    
+    # Get paginated upcoming reservations
+    cur.execute('''
+        SELECT r.*, rm.room_number, rm.room_type, rm.price
+        FROM reservations r 
+        JOIN rooms rm ON r.room_id = rm.id 
+        WHERE r.user_id = %s AND r.status IN ('pending', 'confirmed')
+        ORDER BY r.check_in ASC
+        LIMIT %s OFFSET %s
+    ''', (current_user.id, per_page, offset))
+    upcoming_reservations = cur.fetchall()
+    
+    # Get other dashboard data
     cur.execute('''
         SELECT COUNT(*) as active 
         FROM reservations 
         WHERE user_id = %s AND status IN ('pending', 'confirmed')
     ''', (current_user.id,))
-    active_reservations_count = cur.fetchone()['active']
+    active_reservations = cur.fetchone()['active']
     
-    # Get user's total reservations
     cur.execute('''
         SELECT COUNT(*) as total 
         FROM reservations 
@@ -38,28 +61,19 @@ def dashboard():
     ''', (current_user.id,))
     total_reservations = cur.fetchone()['total']
     
-    # Get available rooms count
     cur.execute("SELECT COUNT(*) as available FROM rooms WHERE status = 'available'")
     available_rooms = cur.fetchone()['available']
-    
-    # Get user's upcoming reservations
-    cur.execute('''
-        SELECT r.*, rm.room_number, rm.room_type, rm.price
-        FROM reservations r 
-        JOIN rooms rm ON r.room_id = rm.id 
-        WHERE r.user_id = %s AND r.status IN ('pending', 'confirmed')
-        ORDER BY r.check_in ASC
-    ''', (current_user.id,))
-    upcoming_reservations = cur.fetchall()
     
     cur.close()
     conn.close()
     
     return render_template('guest/dashboard.html',
-                         active_reservations=active_reservations_count,
+                         active_reservations=active_reservations,
                          total_reservations=total_reservations,
                          available_rooms=available_rooms,
-                         upcoming_reservations=upcoming_reservations)
+                         upcoming_reservations=upcoming_reservations,
+                         current_page=page,
+                         total_pages=total_pages)
 
 @guest.route('/reservation/new', methods=['GET', 'POST'])
 @login_required

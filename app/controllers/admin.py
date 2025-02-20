@@ -19,61 +19,77 @@ def admin_required(f):
 @login_required
 @admin_required
 def dashboard():
+    page = request.args.get('page', 1, type=int)
+    room_page = request.args.get('room_page', 1, type=int)
+    per_page = 4
+    
+    offset = (page - 1) * per_page
+    room_offset = (room_page - 1) * per_page
+    
     conn = get_db()
     cur = conn.cursor(dictionary=True)
     
-    # Get statistics
+    # Pagination untuk rooms
     cur.execute('SELECT COUNT(*) as total FROM rooms')
     total_rooms = cur.fetchone()['total']
+    total_room_pages = (total_rooms + per_page - 1) // per_page
     
-    cur.execute("SELECT COUNT(*) as available FROM rooms WHERE status = 'available'")
-    available_rooms_count = cur.fetchone()['available']
+    # Get paginated rooms
+    cur.execute('''
+        SELECT * FROM rooms 
+        ORDER BY room_number 
+        LIMIT %s OFFSET %s
+    ''', (per_page, room_offset))
+    rooms = cur.fetchall()
     
-    cur.execute("SELECT COUNT(*) as pending FROM reservations WHERE status = 'pending'")
-    pending_reservations = cur.fetchone()['pending']
+    # Pagination untuk reservations (kode yang sudah ada)
+    cur.execute('SELECT COUNT(*) as total FROM reservations')
+    total_records = cur.fetchone()['total']
+    total_pages = (total_records + per_page - 1) // per_page
     
-    cur.execute("SELECT COUNT(*) as total FROM users WHERE role = 'guest'")
-    total_guests = cur.fetchone()['total']
+    # Get paginated reservations (kode yang sudah ada)
+    cur.execute('''
+        SELECT r.*, u.username, rm.room_number, rm.room_type
+        FROM reservations r
+        JOIN users u ON r.user_id = u.id
+        JOIN rooms rm ON r.room_id = rm.id
+        ORDER BY r.created_at DESC
+        LIMIT %s OFFSET %s
+    ''', (per_page, offset))
+    reservations = cur.fetchall()
+    
+    # Get other dashboard data
+    cur.execute("SELECT COUNT(*) as count FROM rooms WHERE status = 'available'")
+    available_rooms = cur.fetchone()['count']
+    
+    cur.execute("SELECT COUNT(*) as count FROM reservations WHERE status = 'pending'")
+    pending_reservations = cur.fetchone()['count']
+    
+    cur.execute("SELECT COUNT(*) as count FROM users WHERE role = 'guest'")
+    total_guests = cur.fetchone()['count']
     
     # Get all rooms
     cur.execute('SELECT * FROM rooms ORDER BY room_number')
-    rooms = cur.fetchall()
+    all_rooms = cur.fetchall()
     
     # Get available rooms untuk form reservasi
     cur.execute("SELECT * FROM rooms WHERE status = 'available' ORDER BY room_type, room_number")
-    available_rooms = cur.fetchall()
-    
-    # Get all rooms untuk form edit
-    cur.execute('SELECT * FROM rooms')
-    all_rooms = cur.fetchall()
-    
-    # Get recent reservations
-    cur.execute('''
-        SELECT r.*, u.username, rm.room_number 
-        FROM reservations r 
-        JOIN users u ON r.user_id = u.id 
-        JOIN rooms rm ON r.room_id = rm.id 
-        ORDER BY r.created_at DESC 
-        LIMIT 10
-    ''')
-    reservations = cur.fetchall()
-    
-    # Get all guests
-    cur.execute('SELECT id, username, email FROM users WHERE role = "guest"')
-    guests = cur.fetchall()
+    available_rooms_list = cur.fetchall()
     
     cur.close()
     conn.close()
     
     return render_template('admin/dashboard.html',
-                         total_rooms=total_rooms,
-                         available_rooms=available_rooms_count,
-                         pending_reservations=pending_reservations,
-                         total_guests=total_guests,
                          rooms=rooms,
                          reservations=reservations,
-                         guests=guests,
-                         available_rooms_list=available_rooms,
+                         available_rooms=available_rooms,
+                         pending_reservations=pending_reservations,
+                         total_guests=total_guests,
+                         current_page=page,
+                         total_pages=total_pages,
+                         current_room_page=room_page,
+                         total_room_pages=total_room_pages,
+                         available_rooms_list=available_rooms_list,
                          all_rooms=all_rooms)
 
 @admin.route('/admin/reservation/<int:id>', methods=['POST'])
